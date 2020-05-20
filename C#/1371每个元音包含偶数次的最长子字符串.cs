@@ -1,87 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//给你一个字符串 s ，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 'a'，'e'，'i'，'o'，'u' ，在子字符串中都恰好出现了偶数次。;
 
-namespace LeetCode
-{
-    class Program
-    {
-        static void Main(string[] args)
+/*
+条件: 每个元音字母,'a','e','i','o','u',在子字符串中都恰好出现了偶数次
+ 
+在前缀和中存储某个元音字母出现次数的奇偶性, 
+若某一区间两侧的前缀和相同,则代表该字母在对应的区间内出现的次数为偶数次(奇数-奇数 = 偶数,偶数-偶数=偶数)。
+同理,若前缀和中存储的是所有元音字母出现次数的奇偶性,那么对于两侧前缀和相同的区间,内部元音字母出现次数都为偶数次。
+ 
+如何存储所有元音字母出现次数的奇偶性信息（以下简称信息）？
+对于单个字母的信息可以用1或0表示,,1代表出现奇数次,0代表出现偶数次，
+同理，对于题中的5个元音，我们可以把它们的信息组合成一个5位2进制数,取值范围是(00000)2到(11111)2,即十进制的0到31。
+ 
+此时，遍历字符串，在记录前缀和的信息的同时，还要检测该信息是否已经出现过，如果出现过则计算两次索引值的差值得到满足条件的子串的长度，
+最后遍历完毕后即可得到的满足条件的最大子串的长度。
+*/
+
+public class Solution {
+    public int FindTheLongestSubstring(string s) {
+        int result = 0;
+        int[] stringIndex = new int[32];
+        for(int i = 0; i < stringIndex.Length; i++)
         {
-            string s = "leetcodeisgreat";
-            Console.WriteLine(Solution.FindTheLongestSubstring(s));
-            Console.ReadLine();
+            stringIndex[i] = -2;
         }
-    }
-    /*对于字符串的第i位,存储从第0位开始到第i位的 a\e\i\o\u的出现次数的奇偶信息(以下简称奇偶信息) 0代表字符出现偶数次,1代表出现奇数次。
-     * 对于a,e,i,o,u五个字符的出现次数的奇偶信息,整合成一个五位二进制数字,该数字的每位都对应一个字符的奇偶信息,
-     * 
-     * 奇偶信息从(00000)B到(11111)B,共有32种。 
-     * 于是设立一个长度为32的数组，对每一位字符串获取它的奇偶信息作为数组的脚标,存储的信息是字符串当前的位数.
-     * 
-     * 对于所有满足aeiou为偶数(以下简称满足条件)的子串,串首和串尾对应的奇偶信息是一致的,
-     * 遍历字符串时,对于上述的数组来说,如果某一数组的元素(脚标对应一种奇偶信息)若已经存储了信息,
-     * 说明这种奇偶状态之前出现过,于是当前位置脚标和之前状态对应的脚标之间的子串满足的条件,记录该子串的长度,
-     * 遍历字符串的过程中出现长度更大的满足条件的子串,就更新信息,最后输出最大长度.
-     */
-    public static class Solution
-    {
-        static public int FindTheLongestSubstring(string s)
+        stringIndex[0] = -1;
+        int vowelInfo = 0;
+        for (int i = 0; i < s.Length; i++)
         {
-            int result = 0;
-            int[] vowelInfo = new int[32];
-            for(int i = 0; i < vowelInfo.Length; i++)
+            switch (s[i])
             {
-                vowelInfo[i] = -1;
-            }
-            int infoIndex = 0;
-            for (int i = 0; i < s.Length; i++)
+                case 'a':
+                    {
+                        vowelInfo ^= 1;
+                        break;
+                    }
+                case 'e':
+                    {
+                        vowelInfo ^= 2;
+                        break;
+                    }
+                case 'i':
+                    {
+                        vowelInfo ^= 4;
+                        break;
+                    }
+                case 'o':
+                    {
+                        vowelInfo ^= 8;
+                        break;
+                    }
+                case 'u':
+                    {
+                        vowelInfo ^= 16;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }//更新第i位的奇偶信息
+            if (stringIndex[vowelInfo] == -2)
             {
-                switch (s[i])
-                {
-                    case 'a':
-                        {
-                            infoIndex ^= 1;
-                            break;
-                        }
-                    case 'e':
-                        {
-                            infoIndex ^= 2;
-                            break;
-                        }
-                    case 'i':
-                        {
-                            infoIndex ^= 4;
-                            break;
-                        }
-                    case 'o':
-                        {
-                            infoIndex ^= 8;
-                            break;
-                        }
-                    case 'u':
-                        {
-                            infoIndex ^= 16;
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
-                }//更新第i位的奇偶信息
-                if (vowelInfo[infoIndex] == -1)
-                {
-                    vowelInfo[infoIndex] = i;
-                }
-                else if(i - vowelInfo[infoIndex] > result)
-                {
-                    result = i - vowelInfo[infoIndex];
-                }
+                stringIndex[vowelInfo] = i;
             }
-            return result;
+            else if(i - stringIndex[vowelInfo] > result)
+            {
+                result = i - stringIndex[vowelInfo];
+            }
         }
+        return result;
     }
 }
