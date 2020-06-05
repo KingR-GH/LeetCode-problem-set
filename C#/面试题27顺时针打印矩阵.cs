@@ -39,11 +39,7 @@ public class Solution {
         do{
             switch(dir){
                 case Direction.right:{
-                    bool flag = false;
                     if(j+1 == width || matrix[i][j+1] == int.MinValue){
-                        flag =true;
-                    }
-                    if(flag == true){
                         if(i+1 == height || matrix[i+1][j] == int.MinValue){
                             isFinish = true;
                             break;
@@ -57,11 +53,7 @@ public class Solution {
                     break;
                 }
                 case Direction.down:{
-                    bool flag = false;
                     if(i+1 == height || matrix[i+1][j] == int.MinValue){
-                        flag =true;
-                    }
-                    if(flag == true){
                         if(j - 1 == -1 || matrix[i][j - 1] == int.MinValue){
                             isFinish = true;
                             break;
@@ -75,11 +67,7 @@ public class Solution {
                     break;
                 }
                 case Direction.left:{
-                    bool flag = false;
                     if(j - 1 == -1 || matrix[i][j - 1] == int.MinValue){
-                        flag =true;
-                    }
-                    if(flag == true){
                         if(i - 1 == -1 || matrix[i - 1][j] == int.MinValue){
                             isFinish = true;
                             break;
@@ -93,11 +81,7 @@ public class Solution {
                     break;
                 }
                 case Direction.up:{
-                    bool flag = false;
                     if(i - 1 == -1 || matrix[i - 1][j] == int.MinValue){
-                        flag =true;
-                    }
-                    if(flag == true){
                         if(j + 1 == height || matrix[i][j + 1] == int.MinValue){
                             isFinish = true;
                             break;
